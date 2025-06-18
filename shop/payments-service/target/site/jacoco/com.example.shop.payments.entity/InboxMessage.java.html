@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InboxMessage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">payments-service</a> &gt; <a href="index.source.html" class="el_package">com.example.shop.payments.entity</a> &gt; <span class="el_source">InboxMessage.java</span></div><h1>InboxMessage.java</h1><pre class="source lang-java linenums">package com.example.shop.payments.entity;
+
+import javax.persistence.*;
+import java.time.Instant;
+import java.util.UUID;
+
+@Entity
+@Table(name = &quot;inbox_messages&quot;)
+public class InboxMessage {
+
+    @Id
+    @Column(name = &quot;message_id&quot;, nullable = false)
+    private UUID messageId;
+
+    @Column(name = &quot;payload&quot;, columnDefinition = &quot;jsonb&quot;, nullable = false)
+    private String payload;
+
+    @Column(name = &quot;status&quot;, nullable = false, length = 20)
+    private String status;
+
+    @Column(name = &quot;received_at&quot;, nullable = false)
+    private Instant receivedAt;
+
+    @Column(name = &quot;processed_at&quot;)
+    private Instant processedAt;
+
+<span class="nc" id="L27">    public InboxMessage() {</span>
+<span class="nc" id="L28">    }</span>
+
+<span class="fc" id="L30">    public InboxMessage(UUID messageId, String payload, String status, Instant receivedAt) {</span>
+<span class="fc" id="L31">        this.messageId = messageId;</span>
+<span class="fc" id="L32">        this.payload = payload;</span>
+<span class="fc" id="L33">        this.status = status;</span>
+<span class="fc" id="L34">        this.receivedAt = receivedAt;</span>
+<span class="fc" id="L35">    }</span>
+
+    public UUID getMessageId() {
+<span class="nc" id="L38">        return messageId;</span>
+    }
+
+    public void setMessageId(UUID messageId) {
+<span class="nc" id="L42">        this.messageId = messageId;</span>
+<span class="nc" id="L43">    }</span>
+
+    public String getPayload() {
+<span class="fc" id="L46">        return payload;</span>
+    }
+
+    public void setPayload(String payload) {
+<span class="nc" id="L50">        this.payload = payload;</span>
+<span class="nc" id="L51">    }</span>
+
+    public String getStatus() {
+<span class="fc" id="L54">        return status;</span>
+    }
+
+    public void setStatus(String status) {
+<span class="fc" id="L58">        this.status = status;</span>
+<span class="fc" id="L59">    }</span>
+
+    public Instant getReceivedAt() {
+<span class="nc" id="L62">        return receivedAt;</span>
+    }
+
+    public void setReceivedAt(Instant receivedAt) {
+<span class="nc" id="L66">        this.receivedAt = receivedAt;</span>
+<span class="nc" id="L67">    }</span>
+
+    public Instant getProcessedAt() {
+<span class="nc" id="L70">        return processedAt;</span>
+    }
+
+    public void setProcessedAt(Instant processedAt) {
+<span class="fc" id="L74">        this.processedAt = processedAt;</span>
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L79">        return &quot;InboxMessage{&quot; + &quot;messageId=&quot; + messageId + &quot;, status='&quot; + status + '\'' + &quot;, receivedAt=&quot; + receivedAt + &quot;, processedAt=&quot; + processedAt + '}';</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

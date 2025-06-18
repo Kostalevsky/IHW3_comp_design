@@ -1,0 +1,11 @@
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/OrderServiceApp.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/config/KafkaConfig.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/controller/OrderController.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/entity/Order.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/entity/OutboxEvent.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/repository/OrderRepository.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/repository/OutboxRepository.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/service/OrderService.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/service/OrderServiceImp.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/service/OutboxPublisher.java
+/Users/daniilkostalevsky/Documents/Вышка/КПО/IHW3/shop/orders-service/src/main/java/com/example/shop/orders/service/PaymentResultListener.java

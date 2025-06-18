@@ -1,0 +1,4 @@
+com/example/shop/payments/AppTest.class
+com/example/shop/payments/service/AccountImpTest.class
+com/example/shop/payments/service/OutboxPublisherTest.class
+com/example/shop/payments/service/MessageProcessorTest.class

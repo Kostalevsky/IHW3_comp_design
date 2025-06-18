@@ -1,0 +1,11 @@
+com/example/shop/orders/repository/OutboxRepository.class
+com/example/shop/orders/service/OrderService.class
+com/example/shop/orders/repository/OrderRepository.class
+com/example/shop/orders/service/OutboxPublisher.class
+com/example/shop/orders/OrderServiceApp.class
+com/example/shop/orders/service/PaymentResultListener.class
+com/example/shop/orders/service/OrderServiceImp.class
+com/example/shop/orders/entity/OutboxEvent.class
+com/example/shop/orders/config/KafkaConfig.class
+com/example/shop/orders/entity/Order.class
+com/example/shop/orders/controller/OrderController.class

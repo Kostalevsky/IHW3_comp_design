@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderServiceImp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">payments-service</a> &gt; <a href="index.source.html" class="el_package">com.example.shop.orders.service</a> &gt; <span class="el_source">OrderServiceImp.java</span></div><h1>OrderServiceImp.java</h1><pre class="source lang-java linenums">package com.example.shop.orders.service;
+
+import com.example.shop.common.dto.OrderResponse;
+import com.example.shop.common.events.OrderCreatedEvent;
+import com.example.shop.orders.entity.Order;
+import com.example.shop.orders.entity.OutboxEvent;
+import com.example.shop.orders.repository.OrderRepository;
+import com.example.shop.orders.repository.OutboxRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.math.BigDecimal;
+
+@Service
+public class OrderServiceImp implements OrderService {
+    private final OrderRepository orderRepo;
+    private final OutboxRepository outboxRepo;
+    private final ObjectMapper mapper;
+
+<span class="nc" id="L26">    public OrderServiceImp(OrderRepository orderRepo, OutboxRepository outboxRepo, ObjectMapper mapper) {</span>
+<span class="nc" id="L27">        this.orderRepo = orderRepo;</span>
+<span class="nc" id="L28">        this.outboxRepo = outboxRepo;</span>
+<span class="nc" id="L29">        this.mapper = mapper;</span>
+<span class="nc" id="L30">    }</span>
+
+    @Override
+    @Transactional
+    public UUID createOrder(UUID userId, BigDecimal amount) {
+<span class="nc" id="L35">        UUID orderId = UUID.randomUUID();</span>
+<span class="nc" id="L36">        Order order = new Order(orderId, userId, amount, &quot;CREATED&quot;, Instant.now());</span>
+<span class="nc" id="L37">        orderRepo.save(order);</span>
+<span class="nc" id="L38">        OrderCreatedEvent evt = new OrderCreatedEvent(orderId, userId, amount);</span>
+
+        String payload;
+        try {
+<span class="nc" id="L42">            payload = mapper.writeValueAsString(evt);</span>
+<span class="nc" id="L43">        } catch (JsonProcessingException e) {</span>
+<span class="nc" id="L44">            throw new IllegalStateException(&quot;Ошибка сериализации события&quot;, e);</span>
+<span class="nc" id="L45">        }</span>
+
+<span class="nc" id="L47">        OutboxEvent out = new OutboxEvent(UUID.randomUUID(), payload, &quot;NEW&quot;, Instant.now());</span>
+<span class="nc" id="L48">        outboxRepo.save(out);</span>
+<span class="nc" id="L49">        outboxRepo.save(out);</span>
+
+<span class="nc" id="L51">        return orderId;</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getOrder(UUID orderId) {
+<span class="nc" id="L57">        Order o = orderRepo.findById(orderId).orElseThrow(() -&gt; new IllegalArgumentException(&quot;Заказ не найден с id: &quot; + orderId));</span>
+<span class="nc" id="L58">        return new OrderResponse(o.getOrderId(), o.getUserId(), o.getAmount(),o.getStatus(), o.getCreatedAt());</span>
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List&lt;OrderResponse&gt; listOrders(UUID userId) {
+<span class="nc" id="L64">        return orderRepo.findAllByUserId(userId).stream().map(o -&gt; new OrderResponse(o.getOrderId(), o.getUserId(), o.getAmount(),o.getStatus(), o.getCreatedAt())).collect(Collectors.toList());</span>
+    }
+
+    @Override
+    @Transactional
+    public void handlePaymentResult(UUID orderId, boolean success, String reason) {
+<span class="nc" id="L70">        Order order = orderRepo.findById(orderId).orElseThrow(() -&gt; new IllegalArgumentException(&quot;Заказ не найден: &quot; + orderId));</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        order.setStatus(success ? &quot;PAID&quot; : &quot;FAILED&quot;);</span>
+<span class="nc" id="L72">        orderRepo.save(order);</span>
+<span class="nc" id="L73">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

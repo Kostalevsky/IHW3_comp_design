@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">payments-service</a> &gt; <a href="index.source.html" class="el_package">com.example.shop.payments.service</a> &gt; <span class="el_source">MessageProcessor.java</span></div><h1>MessageProcessor.java</h1><pre class="source lang-java linenums">package com.example.shop.payments.service;
+
+import com.example.shop.common.events.OrderCreatedEvent;
+import com.example.shop.common.events.PaymentResultEvent;
+import com.example.shop.payments.entity.InboxMessage;
+import com.example.shop.payments.entity.OutboxEvent;
+import com.example.shop.payments.repository.InboxRepository;
+import com.example.shop.payments.repository.OutboxRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+@Component
+public class MessageProcessor {
+    private final InboxRepository inboxRepo;
+    private final OutboxRepository outboxRepo;
+    private final AccountService accountService;
+    private final ObjectMapper mapper;
+
+<span class="fc" id="L26">    public MessageProcessor(InboxRepository inboxRepo, OutboxRepository outboxRepo, AccountService accountService, ObjectMapper mapper, KafkaTemplate&lt;String, String&gt; kafkaTemplate) {</span>
+<span class="fc" id="L27">        this.inboxRepo = inboxRepo;</span>
+<span class="fc" id="L28">        this.outboxRepo = outboxRepo;</span>
+<span class="fc" id="L29">        this.accountService = accountService;</span>
+<span class="fc" id="L30">        this.mapper = mapper;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Scheduled(fixedDelay = 5000)
+    @Transactional
+    public void processInbox() throws Exception {
+<span class="fc" id="L36">        List&lt;InboxMessage&gt; messages = inboxRepo.findByStatus(&quot;NEW&quot;);</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for (InboxMessage msg : messages) {</span>
+            try {
+<span class="fc" id="L39">                OrderCreatedEvent event = mapper.readValue(msg.getPayload(), OrderCreatedEvent.class);</span>
+<span class="fc" id="L40">                boolean success = accountService.tryDebit(event.getUserId(), event.getAmount());</span>
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                PaymentResultEvent result = new PaymentResultEvent(event.getOrderId(), success, success ? null : &quot;Недостаточно средств на счете&quot;);</span>
+<span class="fc" id="L42">                String payload = mapper.writeValueAsString(result);</span>
+<span class="fc" id="L43">                outboxRepo.save(new OutboxEvent(UUID.randomUUID(), payload, &quot;NEW&quot;, Instant.now()));</span>
+<span class="fc" id="L44">                msg.setStatus(&quot;PROCESSED&quot;);</span>
+<span class="fc" id="L45">                msg.setProcessedAt(Instant.now());</span>
+<span class="nc" id="L46">            } catch (Exception e) {</span>
+<span class="nc" id="L47">                msg.setStatus(&quot;FAILED&quot;);</span>
+<span class="fc" id="L48">            }</span>
+<span class="fc" id="L49">            inboxRepo.save(msg);</span>
+<span class="fc" id="L50">        }</span>
+<span class="fc" id="L51">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

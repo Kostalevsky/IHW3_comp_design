@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ru"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccountController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">payments-service</a> &gt; <a href="index.source.html" class="el_package">com.example.shop.payments.controller</a> &gt; <span class="el_source">AccountController.java</span></div><h1>AccountController.java</h1><pre class="source lang-java linenums">package com.example.shop.payments.controller;
+
+import com.example.shop.common.dto.BalanceResponse;
+import com.example.shop.common.dto.CreateAccountRequest;
+import com.example.shop.common.dto.TopUpRequest;
+import com.example.shop.payments.service.AccountService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
+
+@Tag(name = &quot;Accounts&quot;, description = &quot;Управление счетами пользователей&quot;)
+@RestController
+@RequestMapping(&quot;/accounts&quot;)
+public class AccountController {
+    private final AccountService accountService;
+
+<span class="nc" id="L20">    public AccountController(AccountService accountService) {</span>
+<span class="nc" id="L21">        this.accountService = accountService;</span>
+<span class="nc" id="L22">    }</span>
+
+    @Operation(summary = &quot;Создание счета пользователя&quot;, description = &quot;Создает новый счет для пользователя по его идентификатору&quot;)
+    @PostMapping
+    public ResponseEntity&lt;Void&gt; create(@RequestBody CreateAccountRequest request) {
+<span class="nc" id="L27">        accountService.createAccount(request.getUserId());</span>
+<span class="nc" id="L28">        return ResponseEntity.status(201).build();</span>
+    }
+
+    @Operation(summary = &quot;Пополнение счета пользователя&quot;, description = &quot;Позволяет пополнить счет пользователя на указанную сумму&quot;)
+    @PostMapping(&quot;/{userId}/topup&quot;)
+    public ResponseEntity&lt;Void&gt; topUp(@PathVariable UUID userId, @RequestBody TopUpRequest request) {
+<span class="nc" id="L34">        accountService.topUp(userId, request.getAmount());</span>
+<span class="nc" id="L35">        return ResponseEntity.ok().build();</span>
+    }
+
+    @Operation(summary = &quot;Проверка баланса пользователя&quot;, description = &quot;Возвращает текущий баланс счета пользователя по его идентификатору&quot;)
+    @GetMapping(&quot;/{userId}/balance&quot;)
+    public ResponseEntity&lt;BalanceResponse&gt; balance(@PathVariable UUID userId) {
+<span class="nc" id="L41">        return ResponseEntity.ok(new BalanceResponse(accountService.getBalance(userId)));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
